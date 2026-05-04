@@ -9,6 +9,7 @@
   --bg: #0d0f14;
   --surface: #13161e;
   --surface2: #1a1e28;
+  --surface3: #1f2435;
   --border: #252a38;
   --border2: #2f3547;
   --accent: #4f8ef7;
@@ -74,19 +75,26 @@ select:focus { border-color: var(--accent); color: var(--text); }
 .tab-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; }
 
 /* ── TAB PANELS ── */
-.tab-panel { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+.tab-panel { display: none; flex: 1; flex-direction: column; overflow: hidden; min-height: 0; }
 .tab-panel.active { display: flex; }
 
 /* ── COMMISSION PANEL ── */
-#commission-outer { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
-#commission-subtabs-bar { height: 30px; background: var(--surface2); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 10px; gap: 2px; flex-shrink: 0; overflow-x: auto; }
+#commission-outer { display: flex; flex-direction: column; flex: 1; overflow: hidden; min-height: 0; }
+#commission-subtabs-bar { height: 30px; background: var(--surface2); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 10px; gap: 1px; flex-shrink: 0; overflow-x: auto; }
 #commission-subtabs-bar::-webkit-scrollbar { height: 3px; background: var(--border); }
 #commission-subtabs-bar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 .subtab-btn { display: inline-flex; align-items: center; padding: 3px 11px; cursor: pointer; font-family: var(--font); font-size: var(--fs); color: var(--text3); border-radius: 3px; background: transparent; border: none; transition: color .12s, background .12s; white-space: nowrap; user-select: none; }
-.subtab-btn:hover { color: var(--text2); background: var(--surface3, #1f2435); }
+.subtab-btn:hover { color: var(--text2); background: var(--surface3); }
 .subtab-btn.active { color: var(--text); background: var(--accent-dim); }
+.subtab-btn.special { color: var(--accent2); font-weight: bold; }
+.subtab-btn.special.active { background: #0e3328; color: var(--accent2); }
+
+#commission-contents { flex: 1; overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
 .commission-content { flex: 1; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 14px; color: var(--text3); }
 .commission-content.active { display: flex; }
+.commission-content.table-mode { display: none; flex-direction: column; overflow: hidden; align-items: stretch; justify-content: flex-start; }
+.commission-content.table-mode.active { display: flex; }
+
 .placeholder-icon { opacity: 0.25; }
 .placeholder-title { font-size: 13px; font-weight: bold; color: var(--text2); }
 .placeholder-sub { font-size: 10px; color: var(--text3); text-align: center; max-width: 300px; line-height: 1.7; }
@@ -105,22 +113,43 @@ select:focus { border-color: var(--accent); color: var(--text); }
 .toggle-btn .arrow { font-size: 7px; color: var(--text3); transition: transform .15s; }
 .toggle-btn.expanded .arrow { transform: rotate(180deg); color: var(--accent); }
 
-/* ── TABLE ── */
-#table-wrap { flex: 1; overflow: auto; position: relative; }
+/* ── SHARED TABLE STYLES ── */
+.tbl-wrap { flex: 1; overflow: auto; position: relative; min-height: 0; }
 table { border-collapse: collapse; width: max-content; min-width: 100%; table-layout: fixed; }
-thead th { position: sticky; top: 0; z-index: 50; height: var(--header-h); background: var(--surface2); border-bottom: 2px solid var(--accent); border-right: 1px solid var(--border); padding: 0 7px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font); font-size: var(--fs); font-weight: bold; text-transform: uppercase; color: var(--text2); user-select: none; cursor: pointer; vertical-align: middle; }
+
+thead th {
+  position: sticky; top: 0; z-index: 50;
+  height: var(--header-h);
+  background: var(--surface2);
+  border-bottom: 2px solid var(--accent);
+  border-right: 1px solid var(--border);
+  padding: 0 7px;
+  text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-family: var(--font); font-size: var(--fs); font-weight: bold;
+  text-transform: uppercase; color: var(--text2);
+  user-select: none; cursor: pointer; vertical-align: middle;
+}
 thead th:hover { background: #1e2335; color: var(--text); }
 thead th.sorted-asc::after  { content: " ↑"; color: var(--accent); }
 thead th.sorted-desc::after { content: " ↓"; color: var(--accent); }
 thead th.sub-col { color: var(--text3); background: #131726; }
 thead th.sub-col:hover { background: #1a1f30; color: var(--text2); }
+thead th.blank-col { color: var(--text3); background: #101318; cursor: default; }
+thead th.blank-col:hover { background: #101318; color: var(--text3); }
+
+/* frozen first col */
 thead th:first-child { position: sticky; left: 0; z-index: 100; background: var(--surface2); border-right: 2px solid var(--accent); }
 tbody td:first-child { position: sticky; left: 0; z-index: 10; background: var(--bg); border-right: 2px solid var(--border2); color: var(--accent); font-weight: bold; }
+
 tbody tr { height: var(--row-h); border-bottom: 1px solid var(--border); }
 tbody tr.even td { background: #0f1219; }
 tbody tr.even td:first-child { background: #0f1219; }
 tbody tr:hover td { background: #1a1f2e !important; }
 tbody td { padding: 0 7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-right: 1px solid var(--border); font-family: var(--font); font-size: var(--fs); color: var(--text); vertical-align: middle; }
+tbody td.blank-cell { background: #0b0d12; color: var(--text3); border-right: 1px solid #1a1e28; }
+tbody tr.even td.blank-cell { background: #0d0f15; }
+tbody tr:hover td.blank-cell { background: #1a1f2e !important; }
+
 .col-hidden { display: none !important; }
 .badge { display: inline-block; padding: 1px 6px; border-radius: 2px; font-size: 9px; font-weight: bold; letter-spacing: 0.04em; text-transform: uppercase; }
 .badge-paid    { background: #14532d33; color: var(--paid);    border: 1px solid #22c55e33; }
@@ -141,7 +170,6 @@ tbody td { padding: 0 7px; white-space: nowrap; overflow: hidden; text-overflow:
 .kpi-value.blue { color: var(--accent); }
 .kpi-value.plain { color: var(--text); }
 
-/* loading spinner */
 #loading-bar { display: none; position: fixed; top: 0; left: 0; right: 0; height: 2px; background: var(--accent); z-index: 99999; animation: loadpulse 1s ease-in-out infinite; }
 @keyframes loadpulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 </style>
@@ -176,7 +204,7 @@ tbody td { padding: 0 7px; white-space: nowrap; overflow: hidden; text-overflow:
   </div>
 </div>
 
-<!-- ── TOOLBAR ── -->
+<!-- ── TOOLBAR ── */
 <div id="toolbar">
   <div class="logo">SoF <span>/ Project Balance</span></div>
   <div class="divider"></div>
@@ -204,7 +232,7 @@ tbody td { padding: 0 7px; white-space: nowrap; overflow: hidden; text-overflow:
   <button class="tab-btn active" data-tab="project-balance">
     <span class="tab-dot"></span> Project Balance
   </button>
-  <button class="tab-btn" data-tab="commission" style="--tab-dot-color:var(--text3)">
+  <button class="tab-btn" data-tab="commission">
     <span class="tab-dot" style="background:var(--text3)"></span> Commission Tracking
   </button>
 </div>
@@ -212,7 +240,7 @@ tbody td { padding: 0 7px; white-space: nowrap; overflow: hidden; text-overflow:
 <!-- ── PROJECT BALANCE PANEL ── -->
 <div class="tab-panel active" id="panel-project-balance">
   <div id="subbar"><span class="subbar-label">Sub-columns:</span></div>
-  <div id="table-wrap">
+  <div id="table-wrap" class="tbl-wrap">
     <table id="main-table">
       <thead><tr id="header-row"></tr></thead>
       <tbody id="table-body"></tbody>
@@ -231,21 +259,43 @@ tbody td { padding: 0 7px; white-space: nowrap; overflow: hidden; text-overflow:
 <!-- ── COMMISSION TRACKING PANEL ── -->
 <div class="tab-panel" id="panel-commission">
   <div id="commission-outer">
-    <div id="commission-subtabs-bar"><!-- sub-tab buttons injected by JS --></div>
-    <div id="commission-contents"><!-- sub-tab contents injected by JS --></div>
+    <div id="commission-subtabs-bar"></div>
+    <div id="commission-contents"></div>
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 // CONSTANTS
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 const CATEGORY_PARENTS = ['Venue','Travel','MOC and Other Help','Marketing','Photographer','Add Ons'];
 
 const COMMISSION_PEOPLE = [
   'Ciara','Sab','Neil','Benz','Jessi','Frances','Roman','Marcella',
   'Andrea','Diedona','Bleron','Jovana','Yna','Ines','Otero','Gentrit',
   'GioT','Karen','Andrrim','Yoko','Austen','Flandra','Medina','Pom','Christina'
+];
+
+// Comms Tracker columns: { label, srcCol (from PB data, null = blank editable) }
+const COMMS_COLS = [
+  { label: 'Project Tag',       src: 'Project Tag',          w: 115 },
+  { label: 'Date',              src: 'Date',                  w: 95  },
+  { label: 'Amount',            src: 'Total Project Amount',  w: 110, num: true },
+  { label: 'Type',              src: 'Type',                  w: 160 },
+  { label: '# Projects in Deal',src: '# Projects in Deal',   w: 110, num: true },
+  { label: 'Date Paid',         src: 'Payment Date',          w: 95  },
+  { label: 'Full Commission',   src: null,                    w: 110, num: true },
+  { label: 'Source',            src: 'Source',                w: 80  },
+  { label: 'Management',        src: 'Management',            w: 95  },
+  { label: 'TL',                src: 'TL',                    w: 55  },
+  { label: 'Total Amount',      src: null,                    w: 110, num: true },
+  { label: 'Date Closed',       src: 'Closed Date',           w: 95  },
+  { label: 'Renewed?',          src: null,                    w: 80  },
+  { label: 'Quarter Closed',    src: null,                    w: 100 },
+  { label: 'Ortus Prod',        src: null,                    w: 85  },
+  { label: 'Event Quarter',     src: null,                    w: 95  },
+  { label: 'Deflated',          src: null,                    w: 80, num: true  },
+  { label: 'Inflated',          src: null,                    w: 80, num: true  },
 ];
 
 const COL_WIDTHS = {
@@ -272,194 +322,151 @@ const NUM_EXACT = new Set(['Profit','Venue','Travel','MOC and Other Help','Marke
   'Attended','# Projects in Deal']);
 const PCT_SET = new Set(['Profit Percentage','Profit Percentage w/o Add ons','Add-ons Profit Percentage','Profit Percentage w/o Comms']);
 
-const DB_NAME = 'SoFDB', DB_VER = 1, STORE = 'csvStore';
+const DB_NAME='SoFDB', DB_VER=1, STORE='csvStore';
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 // HELPERS
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 function isSubCol(col) {
   if (!col.includes(', ')) return false;
   return CATEGORY_PARENTS.includes(col.substring(0, col.indexOf(', ')));
 }
 function isNumCol(col) {
   if (NUM_EXACT.has(col)) return true;
-  if (isSubCol(col)) {
-    const parent = col.substring(0, col.indexOf(', '));
-    return ['Venue','Travel','MOC and Other Help','Marketing','Photographer','Add Ons'].includes(parent);
-  }
+  if (isSubCol(col)) return true;
   return /^AOs/.test(col);
 }
 function isPctCol(col) { return PCT_SET.has(col); }
 function colW(col) { return COL_WIDTHS[col] || DEFAULT_W; }
-function parseMoney(v) { const n = parseFloat(String(v||'').replace(/[,$%\s]/g,'')); return isNaN(n)?0:n; }
+function parseMoney(v) { const n=parseFloat(String(v||'').replace(/[,$%\s]/g,'')); return isNaN(n)?0:n; }
 function fmt(n) {
-  if (n >= 1e6) return '$'+(n/1e6).toFixed(2)+'M';
-  if (n >= 1e3) return '$'+(n/1e3).toFixed(1)+'K';
+  if (n>=1e6) return '$'+(n/1e6).toFixed(2)+'M';
+  if (n>=1e3) return '$'+(n/1e3).toFixed(1)+'K';
   return '$'+n.toFixed(0);
 }
 
-// ═══════════════════════════════════════════════
-// INDEXEDDB  — persist raw CSV text
-// ═══════════════════════════════════════════════
-let db = null;
-
+// ═══════════════════════════════════════════════════════════
+// INDEXEDDB
+// ═══════════════════════════════════════════════════════════
+let db=null;
 function openDB() {
-  return new Promise((res, rej) => {
-    const req = indexedDB.open(DB_NAME, DB_VER);
-    req.onupgradeneeded = e => {
-      e.target.result.createObjectStore(STORE);
-    };
-    req.onsuccess = e => { db = e.target.result; res(db); };
-    req.onerror   = e => rej(e);
+  return new Promise((res,rej)=>{
+    const req=indexedDB.open(DB_NAME,DB_VER);
+    req.onupgradeneeded=e=>e.target.result.createObjectStore(STORE);
+    req.onsuccess=e=>{ db=e.target.result; res(db); };
+    req.onerror=rej;
   });
 }
-
-function dbSave(key, value) {
-  return new Promise((res, rej) => {
-    const tx = db.transaction(STORE, 'readwrite');
-    tx.objectStore(STORE).put(value, key);
-    tx.oncomplete = res; tx.onerror = rej;
-  });
+function dbSave(key,value) {
+  return new Promise((res,rej)=>{ const tx=db.transaction(STORE,'readwrite'); tx.objectStore(STORE).put(value,key); tx.oncomplete=res; tx.onerror=rej; });
 }
-
 function dbGet(key) {
-  return new Promise((res, rej) => {
-    const tx = db.transaction(STORE, 'readonly');
-    const req = tx.objectStore(STORE).get(key);
-    req.onsuccess = e => res(e.target.result);
-    req.onerror   = rej;
-  });
+  return new Promise((res,rej)=>{ const tx=db.transaction(STORE,'readonly'); const req=tx.objectStore(STORE).get(key); req.onsuccess=e=>res(e.target.result); req.onerror=rej; });
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 // APP STATE
-// ═══════════════════════════════════════════════
-let COLS = [], ROWS = [], filtered = [];
-let sortCol = null, sortDir = 1;
-let subExpanded = {};
-let subColIdxMap = {};
-let currentFileName = '';
+// ═══════════════════════════════════════════════════════════
+let COLS=[], ROWS=[], filtered=[];
+let sortCol=null, sortDir=1;
+let subExpanded={};
+let subColIdxMap={};
+let currentFileName='';
 
-// ═══════════════════════════════════════════════
+// Comms tracker sort state
+let ctSortCol=null, ctSortDir=1;
+let ctFiltered=[];
+
+// ═══════════════════════════════════════════════════════════
 // CSV PARSER
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 function parseCSV(text) {
-  const rows = [];
-  let cells = [], cur = '', inQ = false;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (c === '"') {
-      if (inQ && text[i+1] === '"') { cur += '"'; i++; } else inQ = !inQ;
-    } else if (c === ',' && !inQ) { cells.push(cur); cur = ''; }
-    else if ((c === '\n' || c === '\r') && !inQ) {
-      if (c === '\r' && text[i+1] === '\n') i++;
-      cells.push(cur); rows.push(cells); cells = []; cur = '';
-    } else cur += c;
+  const rows=[]; let cells=[],cur='',inQ=false;
+  for (let i=0;i<text.length;i++) {
+    const c=text[i];
+    if (c==='"') { if(inQ&&text[i+1]==='"'){cur+='"';i++;}else inQ=!inQ; }
+    else if (c===','&&!inQ){cells.push(cur);cur='';}
+    else if ((c==='\n'||c==='\r')&&!inQ){if(c==='\r'&&text[i+1]==='\n')i++;cells.push(cur);rows.push(cells);cells=[];cur='';}
+    else cur+=c;
   }
-  if (cur || cells.length) { cells.push(cur); rows.push(cells); }
+  if(cur||cells.length){cells.push(cur);rows.push(cells);}
   return rows;
 }
 
-const RENAME = {
-  'Source.1':'Source (Region)','Management.1':'Management (Region)',
-  'Type.1':'Type (2)','Photographer.1':'Photographer (2)','Unnamed: 74':''
-};
+const RENAME={'Source.1':'Source (Region)','Management.1':'Management (Region)','Type.1':'Type (2)','Photographer.1':'Photographer (2)','Unnamed: 74':''};
 
 function processCSV(text) {
-  const rows = parseCSV(text);
-  let hi = -1;
-  for (let i = 0; i < Math.min(rows.length, 10); i++) {
-    if (rows[i].some(c => c.trim() === 'Project Tag')) { hi = i; break; }
+  const rows=parseCSV(text);
+  let hi=-1;
+  for(let i=0;i<Math.min(rows.length,10);i++){if(rows[i].some(c=>c.trim()==='Project Tag')){hi=i;break;}}
+  if(hi<0) return null;
+  COLS=rows[hi].map(c=>{const t=c.trim();return RENAME[t]!==undefined?RENAME[t]:t;});
+  ROWS=[];
+  for(let i=hi+1;i<rows.length;i++){
+    const r=rows[i]; if(!r||r.length<2) continue;
+    const tag=(r[0]||'').trim(); if(!tag||/^\d{4}$/.test(tag)) continue;
+    const obj={}; COLS.forEach((col,ci)=>{obj[col]=(r[ci]||'').trim();}); ROWS.push(obj);
   }
-  if (hi < 0) return null;
-
-  COLS = rows[hi].map(c => { const t=c.trim(); return RENAME[t]!==undefined?RENAME[t]:t; });
-  ROWS = [];
-  for (let i = hi+1; i < rows.length; i++) {
-    const r = rows[i];
-    if (!r||r.length<2) continue;
-    const tag = (r[0]||'').trim();
-    if (!tag||/^\d{4}$/.test(tag)) continue;
-    const obj={};
-    COLS.forEach((col,ci)=>{ obj[col]=(r[ci]||'').trim(); });
-    ROWS.push(obj);
-  }
-
-  subColIdxMap = {};
-  CATEGORY_PARENTS.forEach(p => { subColIdxMap[p]=[]; if(subExpanded[p]===undefined) subExpanded[p]=false; });
-  COLS.forEach((col,ci) => {
-    if (!isSubCol(col)) return;
-    const parent = col.substring(0,col.indexOf(', '));
-    if (subColIdxMap[parent]!==undefined) subColIdxMap[parent].push(ci);
-  });
-
+  subColIdxMap={};
+  CATEGORY_PARENTS.forEach(p=>{subColIdxMap[p]=[];if(subExpanded[p]===undefined)subExpanded[p]=false;});
+  COLS.forEach((col,ci)=>{if(!isSubCol(col))return;const parent=col.substring(0,col.indexOf(', '));if(subColIdxMap[parent]!==undefined)subColIdxMap[parent].push(ci);});
   return true;
 }
 
-// ═══════════════════════════════════════════════
-// UPLOAD HANDLING
-// ═══════════════════════════════════════════════
-function showError(msg) {
-  const el=document.getElementById('upload-error');
-  el.textContent=msg; el.style.display='block';
-}
-
-function handleFile(file) {
-  if (!file) return;
-  if (!file.name.toLowerCase().endsWith('.csv')) { showError('Please upload a .csv file.'); return; }
+// ═══════════════════════════════════════════════════════════
+// UPLOAD
+// ═══════════════════════════════════════════════════════════
+function showError(msg){const el=document.getElementById('upload-error');el.textContent=msg;el.style.display='block';}
+function handleFile(file){
+  if(!file)return;
+  if(!file.name.toLowerCase().endsWith('.csv')){showError('Please upload a .csv file.');return;}
   document.getElementById('upload-error').style.display='none';
   document.getElementById('loading-bar').style.display='block';
   const r=new FileReader();
-  r.onload = async e => {
-    const text = e.target.result;
-    const ok = processCSV(text);
-    if (!ok) { showError('Could not find "Project Tag" column. Check the file.'); document.getElementById('loading-bar').style.display='none'; return; }
-    // Save to IndexedDB
-    await dbSave('csvText', text);
-    await dbSave('fileName', file.name);
-    currentFileName = file.name;
+  r.onload=async e=>{
+    const text=e.target.result;
+    const ok=processCSV(text);
+    if(!ok){showError('Could not find "Project Tag" column.');document.getElementById('loading-bar').style.display='none';return;}
+    await dbSave('csvText',text); await dbSave('fileName',file.name);
+    currentFileName=file.name;
     initAfterLoad();
   };
   r.readAsText(file);
 }
-
-const fileInput = document.getElementById('csv-file-input');
-const dropZone  = document.getElementById('drop-zone');
-fileInput.addEventListener('change', e=>handleFile(e.target.files[0]));
-dropZone.addEventListener('dragover', e=>{ e.preventDefault(); dropZone.classList.add('drag-over'); });
-dropZone.addEventListener('dragleave', ()=>dropZone.classList.remove('drag-over'));
-dropZone.addEventListener('drop', e=>{ e.preventDefault(); dropZone.classList.remove('drag-over'); handleFile(e.dataTransfer.files[0]); });
-document.getElementById('change-file-btn').addEventListener('click', ()=>{
+const fileInput=document.getElementById('csv-file-input');
+const dropZone=document.getElementById('drop-zone');
+fileInput.addEventListener('change',e=>handleFile(e.target.files[0]));
+dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('drag-over');});
+dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop',e=>{e.preventDefault();dropZone.classList.remove('drag-over');handleFile(e.dataTransfer.files[0]);});
+document.getElementById('change-file-btn').addEventListener('click',()=>{
   document.getElementById('upload-filename').style.display='none';
   document.getElementById('upload-error').style.display='none';
   document.getElementById('upload-overlay').classList.remove('hidden');
 });
 
-// ═══════════════════════════════════════════════
-// INIT AFTER DATA LOADED
-// ═══════════════════════════════════════════════
-function initAfterLoad() {
-  filtered = [...ROWS];
-  buildFilters();
-  buildSubbar();
-  buildHeader();
-  render();
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+function initAfterLoad(){
+  filtered=[...ROWS]; ctFiltered=[...ROWS];
+  buildFilters(); buildSubbar(); buildHeader(); render();
+  renderCommsTracker();
   updateFileBadge();
   document.getElementById('loading-bar').style.display='none';
   document.getElementById('upload-overlay').classList.add('hidden');
 }
-
-function updateFileBadge() {
-  const badge = document.getElementById('file-badge');
-  if (currentFileName) { badge.textContent = '📄 '+currentFileName; badge.style.display='inline-block'; }
-  else badge.style.display='none';
+function updateFileBadge(){
+  const b=document.getElementById('file-badge');
+  if(currentFileName){b.textContent='📄 '+currentFileName;b.style.display='inline-block';}
+  else b.style.display='none';
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 // MAIN TABS
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 document.querySelectorAll('.tab-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
+  btn.addEventListener('click',()=>{
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
     document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
     btn.classList.add('active');
@@ -467,27 +474,39 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
   });
 });
 
-// ═══════════════════════════════════════════════
-// COMMISSION SUBTABS
-// ═══════════════════════════════════════════════
-(function buildCommissionTabs() {
-  const bar = document.getElementById('commission-subtabs-bar');
-  const contents = document.getElementById('commission-contents');
-  contents.style.cssText = 'flex:1;overflow:hidden;display:flex;flex-direction:column;';
+// ═══════════════════════════════════════════════════════════
+// COMMISSION SUBTABS  (Comms Tracker first, then people)
+// ═══════════════════════════════════════════════════════════
+(function buildCommissionTabs(){
+  const bar=document.getElementById('commission-subtabs-bar');
+  const contents=document.getElementById('commission-contents');
+  contents.style.cssText='flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0;';
 
-  COMMISSION_PEOPLE.forEach((name, i) => {
-    // Sub-tab button
-    const btn = document.createElement('button');
-    btn.className = 'subtab-btn' + (i===0?' active':'');
-    btn.textContent = name;
-    btn.dataset.person = name;
+  // ── 1. Comms Tracker sub-tab ──
+  const ctBtn=document.createElement('button');
+  ctBtn.className='subtab-btn special active';
+  ctBtn.textContent='Comms Tracker';
+  ctBtn.dataset.person='__comms__';
+  bar.appendChild(ctBtn);
+
+  const ctDiv=document.createElement('div');
+  ctDiv.className='commission-content table-mode active';
+  ctDiv.id='commission-person-comms';
+  // Inner: a scrollable table area + no summary (keep it simple)
+  ctDiv.innerHTML=`<div class="tbl-wrap" id="ct-wrap"><table id="ct-table"><thead><tr id="ct-header"></tr></thead><tbody id="ct-body"></tbody></table></div>`;
+  contents.appendChild(ctDiv);
+
+  // ── 2. People sub-tabs ──
+  COMMISSION_PEOPLE.forEach(name=>{
+    const btn=document.createElement('button');
+    btn.className='subtab-btn';
+    btn.textContent=name; btn.dataset.person=name;
     bar.appendChild(btn);
 
-    // Content area
-    const div = document.createElement('div');
-    div.className = 'commission-content' + (i===0?' active':'');
-    div.id = 'commission-person-'+name.toLowerCase().replace(/[^a-z0-9]/g,'');
-    div.innerHTML = `
+    const div=document.createElement('div');
+    div.className='commission-content';
+    div.id='commission-person-'+name.toLowerCase().replace(/[^a-z0-9]/g,'');
+    div.innerHTML=`
       <div class="placeholder-icon">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8">
           <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
@@ -500,154 +519,187 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     contents.appendChild(div);
   });
 
-  // Sub-tab click handler
-  bar.addEventListener('click', e => {
-    const btn = e.target.closest('.subtab-btn');
-    if (!btn) return;
+  // ── Click handler ──
+  bar.addEventListener('click',e=>{
+    const btn=e.target.closest('.subtab-btn');
+    if(!btn) return;
     bar.querySelectorAll('.subtab-btn').forEach(b=>b.classList.remove('active'));
     contents.querySelectorAll('.commission-content').forEach(c=>c.classList.remove('active'));
     btn.classList.add('active');
-    const id = 'commission-person-'+btn.dataset.person.toLowerCase().replace(/[^a-z0-9]/g,'');
-    const panel = document.getElementById(id);
-    if (panel) panel.classList.add('active');
+    const person=btn.dataset.person;
+    if(person==='__comms__'){
+      document.getElementById('commission-person-comms').classList.add('active');
+    } else {
+      const id='commission-person-'+person.toLowerCase().replace(/[^a-z0-9]/g,'');
+      const panel=document.getElementById(id);
+      if(panel) panel.classList.add('active');
+    }
   });
 })();
 
-// ═══════════════════════════════════════════════
-// FILTERS
-// ═══════════════════════════════════════════════
-function buildFilters() {
-  function populate(id, key) {
-    const sel=document.getElementById(id);
-    const first=sel.options[0].cloneNode(true);
-    sel.innerHTML=''; sel.appendChild(first);
-    [...new Set(ROWS.map(r=>r[key]||'').filter(Boolean))].sort()
-      .forEach(v=>{ const o=document.createElement('option'); o.value=o.textContent=v; sel.appendChild(o); });
-  }
-  populate('filter-status','Status');
-  populate('filter-region','Region');
-  populate('filter-type','Type');
-  const ySel=document.getElementById('filter-year');
-  const yF=ySel.options[0].cloneNode(true); ySel.innerHTML=''; ySel.appendChild(yF);
-  [...new Set(ROWS.map(r=>{ const m=(r['Date']||'').match(/\d{4}/); return m?m[0]:''; }).filter(Boolean))].sort()
-    .forEach(v=>{ const o=document.createElement('option'); o.value=o.textContent=v; ySel.appendChild(o); });
+// ═══════════════════════════════════════════════════════════
+// COMMS TRACKER TABLE
+// ═══════════════════════════════════════════════════════════
+function buildCommsHeader(){
+  const hr=document.getElementById('ct-header');
+  hr.innerHTML='';
+  COMMS_COLS.forEach((col,ci)=>{
+    const th=document.createElement('th');
+    th.textContent=col.label; th.title=col.label;
+    th.style.cssText=`width:${col.w}px;min-width:${col.w}px;max-width:${col.w}px`;
+    if(!col.src) th.classList.add('blank-col');
+    else {
+      th.addEventListener('click',()=>ctSortBy(col,th));
+    }
+    hr.appendChild(th);
+  });
 }
 
-['filter-status','filter-region','filter-type','filter-year'].forEach(id=>
-  document.getElementById(id).addEventListener('change', applyFilters));
-document.getElementById('search').addEventListener('input', applyFilters);
+function renderCommsTracker(){
+  if(!document.getElementById('ct-header')) return;
+  buildCommsHeader();
+  renderCommsBody();
+}
 
-function applyFilters() {
-  const q      = document.getElementById('search').value.trim().toLowerCase();
-  const status = document.getElementById('filter-status').value;
-  const region = document.getElementById('filter-region').value;
-  const type   = document.getElementById('filter-type').value;
-  const year   = document.getElementById('filter-year').value;
-  filtered = ROWS.filter(r=>{
-    if (status && r['Status']!==status) return false;
-    if (region && r['Region']!==region) return false;
-    if (type   && r['Type']!==type)     return false;
-    if (year   && !(r['Date']||'').includes(year)) return false;
-    if (q) {
-      const hay=[r['Project Tag'],r['Client'],r['City/Region'],r['Source'],r['Management']].join('|').toLowerCase();
-      if (!hay.includes(q)) return false;
-    }
+function renderCommsBody(){
+  const tbody=document.getElementById('ct-body');
+  if(!tbody) return;
+  const frag=document.createDocumentFragment();
+  ctFiltered.forEach((row,ri)=>{
+    const tr=document.createElement('tr');
+    if(ri%2===0) tr.className='even';
+    COMMS_COLS.forEach((col,ci)=>{
+      const td=document.createElement('td');
+      td.style.cssText=`width:${col.w}px;min-width:${col.w}px;max-width:${col.w}px`;
+      if(!col.src){
+        // blank editable-looking cell
+        td.classList.add('blank-cell');
+        td.textContent='';
+      } else {
+        const val=row[col.src]||'';
+        if(col.num){ td.className='num'; td.textContent=val; }
+        else { td.textContent=val; if(val.length>20) td.title=val; }
+      }
+      tr.appendChild(td);
+    });
+    frag.appendChild(tr);
+  });
+  tbody.innerHTML=''; tbody.appendChild(frag);
+}
+
+function ctSortBy(col,th){
+  if(ctSortCol===col.label) ctSortDir*=-1; else{ctSortCol=col.label;ctSortDir=1;}
+  document.querySelectorAll('#ct-header th').forEach(t=>t.classList.remove('sorted-asc','sorted-desc'));
+  th.classList.add(ctSortDir===1?'sorted-asc':'sorted-desc');
+  ctFiltered.sort((a,b)=>{
+    const av=a[col.src]||'', bv=b[col.src]||'';
+    if(col.num) return (parseMoney(av)-parseMoney(bv))*ctSortDir;
+    return av.localeCompare(bv)*ctSortDir;
+  });
+  renderCommsBody();
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROJECT BALANCE FILTERS
+// ═══════════════════════════════════════════════════════════
+function buildFilters(){
+  function populate(id,key){
+    const sel=document.getElementById(id); const first=sel.options[0].cloneNode(true);
+    sel.innerHTML=''; sel.appendChild(first);
+    [...new Set(ROWS.map(r=>r[key]||'').filter(Boolean))].sort()
+      .forEach(v=>{const o=document.createElement('option');o.value=o.textContent=v;sel.appendChild(o);});
+  }
+  populate('filter-status','Status'); populate('filter-region','Region'); populate('filter-type','Type');
+  const ySel=document.getElementById('filter-year'); const yF=ySel.options[0].cloneNode(true);
+  ySel.innerHTML=''; ySel.appendChild(yF);
+  [...new Set(ROWS.map(r=>{const m=(r['Date']||'').match(/\d{4}/);return m?m[0]:'';}).filter(Boolean))].sort()
+    .forEach(v=>{const o=document.createElement('option');o.value=o.textContent=v;ySel.appendChild(o);});
+}
+['filter-status','filter-region','filter-type','filter-year'].forEach(id=>
+  document.getElementById(id).addEventListener('change',applyFilters));
+document.getElementById('search').addEventListener('input',applyFilters);
+
+function applyFilters(){
+  const q=document.getElementById('search').value.trim().toLowerCase();
+  const status=document.getElementById('filter-status').value;
+  const region=document.getElementById('filter-region').value;
+  const type=document.getElementById('filter-type').value;
+  const year=document.getElementById('filter-year').value;
+  filtered=ROWS.filter(r=>{
+    if(status&&r['Status']!==status)return false;
+    if(region&&r['Region']!==region)return false;
+    if(type&&r['Type']!==type)return false;
+    if(year&&!(r['Date']||'').includes(year))return false;
+    if(q){const hay=[r['Project Tag'],r['Client'],r['City/Region'],r['Source'],r['Management']].join('|').toLowerCase();if(!hay.includes(q))return false;}
     return true;
   });
   render();
 }
 
-// ═══════════════════════════════════════════════
-// SUBBAR
-// ═══════════════════════════════════════════════
-function buildSubbar() {
+// ═══════════════════════════════════════════════════════════
+// SUBBAR (Project Balance)
+// ═══════════════════════════════════════════════════════════
+function buildSubbar(){
   const bar=document.getElementById('subbar');
   bar.querySelectorAll('.toggle-btn').forEach(b=>b.remove());
   CATEGORY_PARENTS.forEach(parent=>{
-    const idxs=subColIdxMap[parent];
-    if (!idxs||idxs.length===0) return;
+    const idxs=subColIdxMap[parent]; if(!idxs||idxs.length===0)return;
     const btn=document.createElement('button');
     btn.className='toggle-btn'+(subExpanded[parent]?' expanded':'');
     btn.dataset.parent=parent;
     btn.innerHTML=`<span class="dot"></span>${parent}<span class="cnt">(${idxs.length})</span><span class="arrow">▼</span>`;
-    btn.addEventListener('click',()=>{
-      subExpanded[parent]=!subExpanded[parent];
-      btn.classList.toggle('expanded',subExpanded[parent]);
-      applyColVisibility();
-    });
+    btn.addEventListener('click',()=>{subExpanded[parent]=!subExpanded[parent];btn.classList.toggle('expanded',subExpanded[parent]);applyColVisibility();});
     bar.appendChild(btn);
   });
 }
-
-function applyColVisibility() {
+function applyColVisibility(){
   COLS.forEach((col,ci)=>{
-    if (!isSubCol(col)) return;
-    const parent=col.substring(0,col.indexOf(', '));
-    if (!CATEGORY_PARENTS.includes(parent)) return;
+    if(!isSubCol(col))return;
+    const parent=col.substring(0,col.indexOf(', ')); if(!CATEGORY_PARENTS.includes(parent))return;
     const show=!!subExpanded[parent];
     const th=document.querySelector(`#header-row th[data-ci="${ci}"]`);
-    if (th) th.classList.toggle('col-hidden',!show);
-    document.querySelectorAll(`#table-body td[data-ci="${ci}"]`)
-      .forEach(td=>td.classList.toggle('col-hidden',!show));
+    if(th) th.classList.toggle('col-hidden',!show);
+    document.querySelectorAll(`#table-body td[data-ci="${ci}"]`).forEach(td=>td.classList.toggle('col-hidden',!show));
   });
 }
 
-// ═══════════════════════════════════════════════
-// BUILD HEADER
-// ═══════════════════════════════════════════════
-function buildHeader() {
-  const hr=document.getElementById('header-row');
-  hr.innerHTML='';
+// ═══════════════════════════════════════════════════════════
+// PROJECT BALANCE HEADER + RENDER
+// ═══════════════════════════════════════════════════════════
+function buildHeader(){
+  const hr=document.getElementById('header-row'); hr.innerHTML='';
   COLS.forEach((col,ci)=>{
-    const th=document.createElement('th');
-    th.textContent=col||''; th.title=col||''; th.dataset.ci=ci;
-    const w=colW(col);
-    th.style.cssText=`width:${w}px;min-width:${w}px;max-width:${w}px`;
-    if (isSubCol(col)) {
-      th.classList.add('sub-col');
-      if (!subExpanded[col.substring(0,col.indexOf(', '))]) th.classList.add('col-hidden');
-    }
-    th.addEventListener('click',()=>sortBy(col,th));
-    hr.appendChild(th);
+    const th=document.createElement('th'); th.textContent=col||''; th.title=col||''; th.dataset.ci=ci;
+    const w=colW(col); th.style.cssText=`width:${w}px;min-width:${w}px;max-width:${w}px`;
+    if(isSubCol(col)){th.classList.add('sub-col');if(!subExpanded[col.substring(0,col.indexOf(', '))])th.classList.add('col-hidden');}
+    th.addEventListener('click',()=>sortBy(col,th)); hr.appendChild(th);
   });
 }
 
-// ═══════════════════════════════════════════════
-// STATUS BADGE
-// ═══════════════════════════════════════════════
-function statusBadge(val) {
-  if (!val) return '';
-  const v=val.toUpperCase();
-  let cls='badge-grey', label=val;
-  if (v==='Y'||v==='PAID')            { cls='badge-paid';    label='Paid'; }
-  else if (v==='OVERDUE')             { cls='badge-overdue'; label='Overdue'; }
-  else if (v==='SENT/AWAITING')       { cls='badge-pending'; label='Pending'; }
-  else if (v==='FOR CD CONFIRMATION') { cls='badge-pending'; label='CD Conf.'; }
-  else if (v==='FREE EVENT')          { cls='badge-free';    label='Free'; }
-  else if (v==='CANCELLED')           { cls='badge-overdue'; label='Cancelled'; }
-  return `<span class="badge ${cls}">${label}</span>`;
+function statusBadge(val){
+  if(!val)return'';const v=val.toUpperCase();let cls='badge-grey',label=val;
+  if(v==='Y'||v==='PAID'){cls='badge-paid';label='Paid';}
+  else if(v==='OVERDUE'){cls='badge-overdue';label='Overdue';}
+  else if(v==='SENT/AWAITING'){cls='badge-pending';label='Pending';}
+  else if(v==='FOR CD CONFIRMATION'){cls='badge-pending';label='CD Conf.';}
+  else if(v==='FREE EVENT'){cls='badge-free';label='Free';}
+  else if(v==='CANCELLED'){cls='badge-overdue';label='Cancelled';}
+  return`<span class="badge ${cls}">${label}</span>`;
 }
 
-// ═══════════════════════════════════════════════
-// RENDER
-// ═══════════════════════════════════════════════
-function render() {
-  const tbody=document.getElementById('table-body');
-  const frag=document.createDocumentFragment();
+function render(){
+  const tbody=document.getElementById('table-body'); const frag=document.createDocumentFragment();
   filtered.forEach((row,ri)=>{
-    const tr=document.createElement('tr');
-    if (ri%2===0) tr.className='even';
+    const tr=document.createElement('tr'); if(ri%2===0)tr.className='even';
     COLS.forEach((col,ci)=>{
-      const td=document.createElement('td');
-      td.dataset.ci=ci;
-      const val=row[col]||'';
-      const w=colW(col);
+      const td=document.createElement('td'); td.dataset.ci=ci;
+      const val=row[col]||''; const w=colW(col);
       td.style.cssText=`width:${w}px;min-width:${w}px;max-width:${w}px`;
-      if (isSubCol(col)&&!subExpanded[col.substring(0,col.indexOf(', '))]) td.classList.add('col-hidden');
-      if (col==='Status') td.innerHTML=statusBadge(val);
-      else if (isPctCol(col)) { td.className=(td.className+' pct').trim(); td.textContent=val; }
-      else if (isNumCol(col)) { td.className=(td.className+' num').trim(); td.textContent=val; }
-      else { td.textContent=val; if(val.length>20) td.title=val; }
+      if(isSubCol(col)&&!subExpanded[col.substring(0,col.indexOf(', '))])td.classList.add('col-hidden');
+      if(col==='Status')td.innerHTML=statusBadge(val);
+      else if(isPctCol(col)){td.className=(td.className+' pct').trim();td.textContent=val;}
+      else if(isNumCol(col)){td.className=(td.className+' num').trim();td.textContent=val;}
+      else{td.textContent=val;if(val.length>20)td.title=val;}
       tr.appendChild(td);
     });
     frag.appendChild(tr);
@@ -657,67 +709,48 @@ function render() {
   updateSummary();
 }
 
-// ═══════════════════════════════════════════════
-// SORT
-// ═══════════════════════════════════════════════
-function sortBy(col,th) {
-  if (sortCol===col) sortDir*=-1; else { sortCol=col; sortDir=1; }
-  document.querySelectorAll('thead th').forEach(t=>t.classList.remove('sorted-asc','sorted-desc'));
+function sortBy(col,th){
+  if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1;}
+  document.querySelectorAll('#header-row th').forEach(t=>t.classList.remove('sorted-asc','sorted-desc'));
   th.classList.add(sortDir===1?'sorted-asc':'sorted-desc');
   const num=isNumCol(col)||isPctCol(col);
-  filtered.sort((a,b)=>{
-    const av=a[col]||'', bv=b[col]||'';
-    return num?(parseMoney(av)-parseMoney(bv))*sortDir:av.localeCompare(bv)*sortDir;
-  });
+  filtered.sort((a,b)=>{const av=a[col]||'',bv=b[col]||'';return num?(parseMoney(av)-parseMoney(bv))*sortDir:av.localeCompare(bv)*sortDir;});
   render();
 }
 
-// ═══════════════════════════════════════════════
-// SUMMARY
-// ═══════════════════════════════════════════════
-function updateSummary() {
+function updateSummary(){
   let rev=0,spend=0,profit=0,overdue=0,margins=[];
   filtered.forEach(r=>{
-    rev    += parseMoney(r['Total Project Amount']);
-    spend  += parseMoney(r['Total Project Spend']);
-    profit += parseMoney(r['Profit']);
-    if ((r['Status']||'').toUpperCase()==='OVERDUE') overdue+=parseMoney(r['Total Project Amount']);
-    const m=parseFloat((r['Profit Percentage']||'').replace('%',''));
-    if (!isNaN(m)) margins.push(m);
+    rev+=parseMoney(r['Total Project Amount']); spend+=parseMoney(r['Total Project Spend']); profit+=parseMoney(r['Profit']);
+    if((r['Status']||'').toUpperCase()==='OVERDUE')overdue+=parseMoney(r['Total Project Amount']);
+    const m=parseFloat((r['Profit Percentage']||'').replace('%',''));if(!isNaN(m))margins.push(m);
   });
   const avg=margins.length?margins.reduce((a,b)=>a+b,0)/margins.length:0;
-  document.getElementById('s-rev').textContent    = fmt(rev);
-  document.getElementById('s-spend').textContent  = fmt(spend);
-  document.getElementById('s-profit').textContent = fmt(profit);
-  document.getElementById('s-margin').textContent = avg.toFixed(1)+'%';
-  document.getElementById('s-overdue').textContent= fmt(overdue);
-  document.getElementById('s-count').textContent  = filtered.length.toLocaleString();
+  document.getElementById('s-rev').textContent=fmt(rev);
+  document.getElementById('s-spend').textContent=fmt(spend);
+  document.getElementById('s-profit').textContent=fmt(profit);
+  document.getElementById('s-margin').textContent=avg.toFixed(1)+'%';
+  document.getElementById('s-overdue').textContent=fmt(overdue);
+  document.getElementById('s-count').textContent=filtered.length.toLocaleString();
 }
 
-// ═══════════════════════════════════════════════
-// BOOT — try to load saved CSV from IndexedDB
-// ═══════════════════════════════════════════════
-(async function boot() {
+// ═══════════════════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════════════════
+(async function boot(){
   try {
     await openDB();
-    const savedText = await dbGet('csvText');
-    const savedName = await dbGet('fileName');
-    if (savedText) {
-      currentFileName = savedName || 'saved file';
-      // Show saved file info on upload screen briefly, then auto-load
-      const fnEl = document.getElementById('upload-filename');
-      fnEl.textContent = '✓ Previously saved: ' + currentFileName;
-      fnEl.style.display = 'block';
+    const savedText=await dbGet('csvText'); const savedName=await dbGet('fileName');
+    if(savedText){
+      currentFileName=savedName||'saved file';
+      const fnEl=document.getElementById('upload-filename');
+      fnEl.textContent='✓ Previously saved: '+currentFileName; fnEl.style.display='block';
       document.getElementById('loading-bar').style.display='block';
-      // Small delay so the UI paints
       await new Promise(r=>setTimeout(r,80));
-      const ok = processCSV(savedText);
-      if (ok) { initAfterLoad(); return; }
+      const ok=processCSV(savedText);
+      if(ok){initAfterLoad();return;}
     }
-  } catch(e) {
-    console.warn('IndexedDB unavailable, falling back to upload-only mode.', e);
-  }
-  // No saved data — stay on upload screen
+  } catch(e){ console.warn('IndexedDB unavailable.',e); }
   document.getElementById('loading-bar').style.display='none';
 })();
 </script>
