@@ -303,7 +303,7 @@ const COL_WIDTHS = {
   'MoC':70,'Moderator':155,'Helper':155,'Attended':68,'Status':90,
   'Payment Date':95,'Date Expected':95,'Guesting Commissions':125,'Sales Commissions':115,
   'Total Project Spend':135,'Profit':85,'Profit Percentage':105,
-  'Source':75,'Management':90,'Source (Region)':90,'Management (Region)':110,'Region':65,
+  'Source':75,'Management':90,'Source Region':90,'Management Region':110,'Region':65,
   'Roundtable/Masterclass':140,'Virtual/Physical':105,'East/West':75,'OC/ NON-OC':85,
   'Closed Date':95,'TL':55,'Completed':75,'# Projects in Deal':110,
   'Total Project Spend w/o Comms and Add-ons':195,'Project amount w/o add-ons and Top-up':190,
@@ -411,7 +411,7 @@ function parseCSV(text) {
   return rows;
 }
 
-const RENAME={'Source.1':'Source (Region)','Management.1':'Management (Region)','Type.1':'Type (2)','Photographer.1':'Photographer (2)','Unnamed: 74':''};
+const RENAME={'Source.1':'Source Region','Management.1':'Management Region','Type.1':'Type (2)','Photographer.1':'Photographer (2)','Unnamed: 74':''};
 
 function processCSV(text) {
   const rows=parseCSV(text);
